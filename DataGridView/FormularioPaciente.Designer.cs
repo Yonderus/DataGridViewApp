@@ -40,6 +40,7 @@
             this.lblPacienteTitulo = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btEditarPaciente = new System.Windows.Forms.Button();
             this.btRegistrarPaciente = new System.Windows.Forms.Button();
             this.tbEdadPaciente = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -49,7 +50,6 @@
             this.tbNombrePaciente = new System.Windows.Forms.TextBox();
             this.dgvRegistro = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
-            this.btEditarPaciente = new System.Windows.Forms.Button();
             this.menuStripAcciones.SuspendLayout();
             this.TLSAcciones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -85,20 +85,23 @@
             // agregarToolStripMenuItem
             // 
             this.agregarToolStripMenuItem.Name = "agregarToolStripMenuItem";
-            this.agregarToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
+            this.agregarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.agregarToolStripMenuItem.Text = "Agregar";
+            this.agregarToolStripMenuItem.Click += new System.EventHandler(this.agregarToolStripMenuItem_Click);
             // 
             // editarToolStripMenuItem
             // 
             this.editarToolStripMenuItem.Name = "editarToolStripMenuItem";
-            this.editarToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
+            this.editarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.editarToolStripMenuItem.Text = "Editar";
+            this.editarToolStripMenuItem.Click += new System.EventHandler(this.editarToolStripMenuItem_Click);
             // 
             // saberMásMNU
             // 
             this.saberMásMNU.Name = "saberMásMNU";
             this.saberMásMNU.Size = new System.Drawing.Size(92, 24);
             this.saberMásMNU.Text = "Saber más";
+            this.saberMásMNU.Click += new System.EventHandler(this.saberMásMNU_Click);
             // 
             // TLSAcciones
             // 
@@ -121,6 +124,7 @@
             this.TLSagregar.Name = "TLSagregar";
             this.TLSagregar.Size = new System.Drawing.Size(29, 24);
             this.TLSagregar.Text = "toolStripButtonAgregar";
+            this.TLSagregar.Click += new System.EventHandler(this.TLSagregar_Click);
             // 
             // TLSeditar
             // 
@@ -130,6 +134,7 @@
             this.TLSeditar.Name = "TLSeditar";
             this.TLSeditar.Size = new System.Drawing.Size(29, 24);
             this.TLSeditar.Text = "toolStripButtonEditar";
+            this.TLSeditar.Click += new System.EventHandler(this.TLSeditar_Click);
             // 
             // lblPacienteTitulo
             // 
@@ -172,6 +177,20 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(452, 372);
             this.panel2.TabIndex = 5;
+            // 
+            // btEditarPaciente
+            // 
+            this.btEditarPaciente.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.btEditarPaciente.Font = new System.Drawing.Font("MS Gothic", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btEditarPaciente.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btEditarPaciente.Location = new System.Drawing.Point(114, 307);
+            this.btEditarPaciente.Name = "btEditarPaciente";
+            this.btEditarPaciente.Size = new System.Drawing.Size(209, 50);
+            this.btEditarPaciente.TabIndex = 7;
+            this.btEditarPaciente.Text = "Editar Paciente";
+            this.btEditarPaciente.UseVisualStyleBackColor = false;
+            this.btEditarPaciente.Visible = false;
+            this.btEditarPaciente.Click += new System.EventHandler(this.btEditarPaciente_Click);
             // 
             // btRegistrarPaciente
             // 
@@ -253,6 +272,7 @@
             this.dgvRegistro.Size = new System.Drawing.Size(533, 371);
             this.dgvRegistro.TabIndex = 6;
             this.dgvRegistro.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRegistro_CellContentClick);
+            this.dgvRegistro.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRegistro_RowEnter);
             // 
             // label1
             // 
@@ -265,20 +285,6 @@
             this.label1.Text = "Bienvenido a la edición de pacientes";
             this.label1.Visible = false;
             this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // btEditarPaciente
-            // 
-            this.btEditarPaciente.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.btEditarPaciente.Font = new System.Drawing.Font("MS Gothic", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btEditarPaciente.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btEditarPaciente.Location = new System.Drawing.Point(114, 307);
-            this.btEditarPaciente.Name = "btEditarPaciente";
-            this.btEditarPaciente.Size = new System.Drawing.Size(209, 50);
-            this.btEditarPaciente.TabIndex = 7;
-            this.btEditarPaciente.Text = "Editar Paciente";
-            this.btEditarPaciente.UseVisualStyleBackColor = false;
-            this.btEditarPaciente.Visible = false;
-            this.btEditarPaciente.Click += new System.EventHandler(this.btEditarPaciente_Click);
             // 
             // FormularioPaciente
             // 

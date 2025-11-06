@@ -145,9 +145,9 @@ namespace DataGridView
         {
             if (dgvRegistro.CurrentRow != null)
             {
-                Paciente pacienteSeleccionado = (Paciente)dgvRegistro.CurrentRow.DataBoundItem;
-                pacienteSeleccionado.Name = tbNombrePaciente.Text;
-                pacienteSeleccionado.Surname = tbApellidoPaciente.Text;
+                //Paciente pacienteSeleccionado = (Paciente)dgvRegistro.CurrentRow.DataBoundItem;
+                actualPacient.Name = tbNombrePaciente.Text;
+                actualPacient.Surname = tbApellidoPaciente.Text;
                 int edad;
                 if (tbNombrePaciente.Text == "" || tbApellidoPaciente.Text == "" || tbEdadPaciente == null)
                 {
@@ -162,7 +162,7 @@ namespace DataGridView
                 //Una vez se cumplan los anteriores, añadimos los datos a la lista
                 else
                 {
-                    pacienteSeleccionado.Age = edad;
+                    actualPacient.Age = edad;
 
                 }
                 tbApellidoPaciente.Clear();
@@ -175,6 +175,56 @@ namespace DataGridView
                 this.Close();
 
             }
+        }
+
+        private void TLSeditar_Click(object sender, EventArgs e)
+        {
+            //Habilitamos todas las funciones para que el titulo cambie y el botón de editar sea visible
+            btEditarPaciente.Visible = true;
+            btEditarPaciente.Enabled = true;
+            btRegistrarPaciente.Visible = false;
+            btRegistrarPaciente.Enabled = false;
+
+            label1.Visible = true;
+            lblPacienteTitulo.Visible = false;
+
+
+        }
+
+        private void dgvRegistro_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            //// Obtener la fila actual
+            //DataGridViewRow fila = dgvRegistro.Rows[e.RowIndex];
+
+            //// Asignar valores a controles
+            //tbNombrePaciente.Text = fila.Cells["Name"].Value.ToString();
+            //tbApellidoPaciente.Text = fila.Cells["Surname"].Value.ToString();
+            //tbEdadPaciente.Text = fila.Cells["Age"].Value.ToString();
+
+            
+
+
+
+        }
+
+        private void TLSagregar_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void agregarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void editarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saberMásMNU_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("En este apartado podrás tanto editar, como ingresar pacientes.");
         }
     }
 }

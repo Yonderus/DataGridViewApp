@@ -37,10 +37,14 @@
             this.TLSAcciones = new System.Windows.Forms.ToolStrip();
             this.TLSagregar = new System.Windows.Forms.ToolStripButton();
             this.TLSeditar = new System.Windows.Forms.ToolStripButton();
+            this.TLSeliminar = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btAgregarIngreso2 = new System.Windows.Forms.Button();
             this.btbEditarIngresoFI = new System.Windows.Forms.Button();
             this.btEliminarIngreso = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gpbAgregarIngreso = new System.Windows.Forms.GroupBox();
+            this.btEditarIngreso2 = new System.Windows.Forms.Button();
+            this.chbFechaAlta = new System.Windows.Forms.CheckBox();
             this.dtAlta = new System.Windows.Forms.DateTimePicker();
             this.dtIngreso = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
@@ -50,15 +54,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tbMotivo = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.dgvIngresos = new System.Windows.Forms.DataGridView();
             this.lblIngresosTitulo = new System.Windows.Forms.Label();
-            this.TLSeliminar = new System.Windows.Forms.ToolStripButton();
+            this.eliminarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripAcciones.SuspendLayout();
             this.TLSAcciones.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.gpbAgregarIngreso.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvIngresos)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,7 +82,8 @@
             // 
             this.accionsMNU.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.agregarToolStripMenuItem,
-            this.editarToolStripMenuItem});
+            this.editarToolStripMenuItem,
+            this.eliminarToolStripMenuItem});
             this.accionsMNU.Name = "accionsMNU";
             this.accionsMNU.Size = new System.Drawing.Size(82, 24);
             this.accionsMNU.Text = "Acciones";
@@ -89,18 +93,21 @@
             this.agregarToolStripMenuItem.Name = "agregarToolStripMenuItem";
             this.agregarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.agregarToolStripMenuItem.Text = "Agregar";
+            this.agregarToolStripMenuItem.Click += new System.EventHandler(this.agregarToolStripMenuItem_Click);
             // 
             // editarToolStripMenuItem
             // 
             this.editarToolStripMenuItem.Name = "editarToolStripMenuItem";
             this.editarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.editarToolStripMenuItem.Text = "Editar";
+            this.editarToolStripMenuItem.Click += new System.EventHandler(this.editarToolStripMenuItem_Click);
             // 
             // saberMásMNU
             // 
             this.saberMásMNU.Name = "saberMásMNU";
             this.saberMásMNU.Size = new System.Drawing.Size(92, 24);
             this.saberMásMNU.Text = "Saber más";
+            this.saberMásMNU.Click += new System.EventHandler(this.saberMásMNU_Click);
             // 
             // TLSAcciones
             // 
@@ -124,6 +131,7 @@
             this.TLSagregar.Name = "TLSagregar";
             this.TLSagregar.Size = new System.Drawing.Size(29, 24);
             this.TLSagregar.Text = "toolStripButtonAgregar";
+            this.TLSagregar.Click += new System.EventHandler(this.TLSagregar_Click);
             // 
             // TLSeditar
             // 
@@ -133,27 +141,52 @@
             this.TLSeditar.Name = "TLSeditar";
             this.TLSeditar.Size = new System.Drawing.Size(29, 24);
             this.TLSeditar.Text = "toolStripButtonEditar";
+            this.TLSeditar.Click += new System.EventHandler(this.TLSeditar_Click);
+            // 
+            // TLSeliminar
+            // 
+            this.TLSeliminar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.TLSeliminar.Image = ((System.Drawing.Image)(resources.GetObject("TLSeliminar.Image")));
+            this.TLSeliminar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.TLSeliminar.Name = "TLSeliminar";
+            this.TLSeliminar.Size = new System.Drawing.Size(29, 24);
+            this.TLSeliminar.Text = "toolStripButtonEliminar";
+            this.TLSeliminar.Click += new System.EventHandler(this.TLSeliminar_Click);
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.panel1.Controls.Add(this.btAgregarIngreso2);
             this.panel1.Controls.Add(this.btbEditarIngresoFI);
             this.panel1.Controls.Add(this.btEliminarIngreso);
-            this.panel1.Controls.Add(this.groupBox1);
+            this.panel1.Controls.Add(this.gpbAgregarIngreso);
             this.panel1.Controls.Add(this.dgvIngresos);
             this.panel1.Location = new System.Drawing.Point(33, 137);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(943, 705);
             this.panel1.TabIndex = 3;
             // 
+            // btAgregarIngreso2
+            // 
+            this.btAgregarIngreso2.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.btAgregarIngreso2.Font = new System.Drawing.Font("MS Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btAgregarIngreso2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btAgregarIngreso2.Location = new System.Drawing.Point(341, 372);
+            this.btAgregarIngreso2.Name = "btAgregarIngreso2";
+            this.btAgregarIngreso2.Size = new System.Drawing.Size(277, 41);
+            this.btAgregarIngreso2.TabIndex = 9;
+            this.btAgregarIngreso2.Text = "Agregar Ingreso";
+            this.btAgregarIngreso2.UseVisualStyleBackColor = false;
+            this.btAgregarIngreso2.Click += new System.EventHandler(this.btAgregarIngreso2_Click);
+            // 
             // btbEditarIngresoFI
             // 
             this.btbEditarIngresoFI.BackColor = System.Drawing.Color.CornflowerBlue;
             this.btbEditarIngresoFI.Font = new System.Drawing.Font("MS Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btbEditarIngresoFI.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btbEditarIngresoFI.Location = new System.Drawing.Point(81, 372);
+            this.btbEditarIngresoFI.Location = new System.Drawing.Point(19, 372);
             this.btbEditarIngresoFI.Name = "btbEditarIngresoFI";
-            this.btbEditarIngresoFI.Size = new System.Drawing.Size(331, 41);
+            this.btbEditarIngresoFI.Size = new System.Drawing.Size(279, 41);
             this.btbEditarIngresoFI.TabIndex = 8;
             this.btbEditarIngresoFI.Text = "Editar Ingreso";
             this.btbEditarIngresoFI.UseVisualStyleBackColor = false;
@@ -164,38 +197,64 @@
             this.btEliminarIngreso.BackColor = System.Drawing.Color.CornflowerBlue;
             this.btEliminarIngreso.Font = new System.Drawing.Font("MS Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btEliminarIngreso.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btEliminarIngreso.Location = new System.Drawing.Point(523, 372);
+            this.btEliminarIngreso.Location = new System.Drawing.Point(656, 372);
             this.btEliminarIngreso.Name = "btEliminarIngreso";
-            this.btEliminarIngreso.Size = new System.Drawing.Size(331, 41);
+            this.btEliminarIngreso.Size = new System.Drawing.Size(270, 41);
             this.btEliminarIngreso.TabIndex = 7;
             this.btEliminarIngreso.Text = "Eliminar Ingreso";
             this.btEliminarIngreso.UseVisualStyleBackColor = false;
             this.btEliminarIngreso.Click += new System.EventHandler(this.button4_Click);
             // 
-            // groupBox1
+            // gpbAgregarIngreso
             // 
-            this.groupBox1.Controls.Add(this.dtAlta);
-            this.groupBox1.Controls.Add(this.dtIngreso);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.tbEspecialidad);
-            this.groupBox1.Controls.Add(this.btbAgregarIngreso);
-            this.groupBox1.Controls.Add(this.tbHabitacion);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.tbMotivo);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Font = new System.Drawing.Font("MS Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(19, 462);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(907, 221);
-            this.groupBox1.TabIndex = 6;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Agregar Ingreso";
+            this.gpbAgregarIngreso.Controls.Add(this.btEditarIngreso2);
+            this.gpbAgregarIngreso.Controls.Add(this.chbFechaAlta);
+            this.gpbAgregarIngreso.Controls.Add(this.dtAlta);
+            this.gpbAgregarIngreso.Controls.Add(this.dtIngreso);
+            this.gpbAgregarIngreso.Controls.Add(this.label5);
+            this.gpbAgregarIngreso.Controls.Add(this.tbEspecialidad);
+            this.gpbAgregarIngreso.Controls.Add(this.btbAgregarIngreso);
+            this.gpbAgregarIngreso.Controls.Add(this.tbHabitacion);
+            this.gpbAgregarIngreso.Controls.Add(this.label4);
+            this.gpbAgregarIngreso.Controls.Add(this.tbMotivo);
+            this.gpbAgregarIngreso.Controls.Add(this.label3);
+            this.gpbAgregarIngreso.Controls.Add(this.label1);
+            this.gpbAgregarIngreso.Font = new System.Drawing.Font("MS Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gpbAgregarIngreso.Location = new System.Drawing.Point(19, 462);
+            this.gpbAgregarIngreso.Name = "gpbAgregarIngreso";
+            this.gpbAgregarIngreso.Size = new System.Drawing.Size(907, 221);
+            this.gpbAgregarIngreso.TabIndex = 6;
+            this.gpbAgregarIngreso.TabStop = false;
+            this.gpbAgregarIngreso.Text = "Agregar Ingreso";
+            this.gpbAgregarIngreso.Visible = false;
+            // 
+            // btEditarIngreso2
+            // 
+            this.btEditarIngreso2.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.btEditarIngreso2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btEditarIngreso2.Location = new System.Drawing.Point(675, 130);
+            this.btEditarIngreso2.Name = "btEditarIngreso2";
+            this.btEditarIngreso2.Size = new System.Drawing.Size(175, 66);
+            this.btEditarIngreso2.TabIndex = 14;
+            this.btEditarIngreso2.Text = "Editar Ingreso";
+            this.btEditarIngreso2.UseVisualStyleBackColor = false;
+            this.btEditarIngreso2.Visible = false;
+            this.btEditarIngreso2.Click += new System.EventHandler(this.btEditarIngreso2_Click);
+            // 
+            // chbFechaAlta
+            // 
+            this.chbFechaAlta.AutoSize = true;
+            this.chbFechaAlta.Location = new System.Drawing.Point(322, 36);
+            this.chbFechaAlta.Name = "chbFechaAlta";
+            this.chbFechaAlta.Size = new System.Drawing.Size(174, 24);
+            this.chbFechaAlta.TabIndex = 13;
+            this.chbFechaAlta.Text = "Fecha de alta";
+            this.chbFechaAlta.UseVisualStyleBackColor = true;
+            this.chbFechaAlta.CheckedChanged += new System.EventHandler(this.chbFechaAlta_CheckedChanged);
             // 
             // dtAlta
             // 
-            this.dtAlta.Location = new System.Drawing.Point(322, 72);
+            this.dtAlta.Location = new System.Drawing.Point(322, 75);
             this.dtAlta.Name = "dtAlta";
             this.dtAlta.Size = new System.Drawing.Size(245, 27);
             this.dtAlta.TabIndex = 12;
@@ -203,7 +262,7 @@
             // 
             // dtIngreso
             // 
-            this.dtIngreso.Location = new System.Drawing.Point(19, 72);
+            this.dtIngreso.Location = new System.Drawing.Point(19, 75);
             this.dtIngreso.Name = "dtIngreso";
             this.dtIngreso.Size = new System.Drawing.Size(232, 27);
             this.dtIngreso.TabIndex = 11;
@@ -220,7 +279,7 @@
             // 
             // tbEspecialidad
             // 
-            this.tbEspecialidad.Location = new System.Drawing.Point(637, 72);
+            this.tbEspecialidad.Location = new System.Drawing.Point(637, 77);
             this.tbEspecialidad.Name = "tbEspecialidad";
             this.tbEspecialidad.Size = new System.Drawing.Size(245, 27);
             this.tbEspecialidad.TabIndex = 9;
@@ -272,15 +331,6 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Motivo:";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(318, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(163, 20);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Fecha de Alta:";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -292,6 +342,8 @@
             // 
             // dgvIngresos
             // 
+            this.dgvIngresos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvIngresos.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dgvIngresos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvIngresos.Location = new System.Drawing.Point(19, 18);
             this.dgvIngresos.Name = "dgvIngresos";
@@ -300,6 +352,7 @@
             this.dgvIngresos.Size = new System.Drawing.Size(907, 323);
             this.dgvIngresos.TabIndex = 5;
             this.dgvIngresos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvIngresos_CellContentClick);
+            this.dgvIngresos.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvIngresos_RowEnter);
             // 
             // lblIngresosTitulo
             // 
@@ -311,14 +364,12 @@
             this.lblIngresosTitulo.TabIndex = 4;
             this.lblIngresosTitulo.Text = "Bienvenido al formulario de Ingresos";
             // 
-            // TLSeliminar
+            // eliminarToolStripMenuItem
             // 
-            this.TLSeliminar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TLSeliminar.Image = ((System.Drawing.Image)(resources.GetObject("TLSeliminar.Image")));
-            this.TLSeliminar.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TLSeliminar.Name = "TLSeliminar";
-            this.TLSeliminar.Size = new System.Drawing.Size(29, 24);
-            this.TLSeliminar.Text = "toolStripButtonEliminar";
+            this.eliminarToolStripMenuItem.Name = "eliminarToolStripMenuItem";
+            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.eliminarToolStripMenuItem.Text = "Eliminar";
+            this.eliminarToolStripMenuItem.Click += new System.EventHandler(this.eliminarToolStripMenuItem_Click);
             // 
             // FormularioIngersos
             // 
@@ -337,8 +388,8 @@
             this.TLSAcciones.ResumeLayout(false);
             this.TLSAcciones.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gpbAgregarIngreso.ResumeLayout(false);
+            this.gpbAgregarIngreso.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvIngresos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -357,14 +408,13 @@
         private System.Windows.Forms.ToolStripButton TLSeditar;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblIngresosTitulo;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gpbAgregarIngreso;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dgvIngresos;
         private System.Windows.Forms.TextBox tbHabitacion;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbMotivo;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btbAgregarIngreso;
         private System.Windows.Forms.Button btEliminarIngreso;
         private System.Windows.Forms.Button btbEditarIngresoFI;
@@ -373,5 +423,9 @@
         private System.Windows.Forms.DateTimePicker dtAlta;
         private System.Windows.Forms.DateTimePicker dtIngreso;
         private System.Windows.Forms.ToolStripButton TLSeliminar;
+        private System.Windows.Forms.CheckBox chbFechaAlta;
+        private System.Windows.Forms.Button btEditarIngreso2;
+        private System.Windows.Forms.Button btAgregarIngreso2;
+        private System.Windows.Forms.ToolStripMenuItem eliminarToolStripMenuItem;
     }
 }

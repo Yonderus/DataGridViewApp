@@ -19,6 +19,7 @@ namespace DataGridView
         public Form1()
         {
             InitializeComponent();
+
         }
 
         private void RefrescarGrid()
@@ -90,7 +91,7 @@ namespace DataGridView
 
         private void dataGridViewForm1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-    
+            RefrescarGrid();
         }
 
         private void abrirIngresos()
