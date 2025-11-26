@@ -1,62 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace DataGridView
 {
+
     public partial class Form1 : Form
     {
+        string cadena = ConfigurationManager.ConnectionStrings["conn"].ConnectionString;
 
-        private List<Paciente> pacientes = new List<Paciente>();
-        private int contadorId = 1;
-        private int contadorIdIngreso = 1;
+
         public Form1()
         {
             InitializeComponent();
-
+            RellenarDGV();
         }
 
-        private void RefrescarGrid()
-        {
-            //Relleno el textbox con  la lista
-            dataGridViewForm1.DataSource = null;
-            dataGridViewForm1.DataSource = pacientes;
-        }
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //Creo unos cuantos registros pero para comprobar el funcionamiento de la App
-
-            pacientes.Add(new Paciente { Id = contadorId++, Name = "Javier", Surname = "Gisbert", Age = 20, Ingresos = new List<Ingreso> { new Ingreso { Id = contadorIdIngreso++,  
-            FechaIngreso = new DateTime(2025, 10, 10),
-            FechaAlta = new DateTime(),
-            Motivo = "Fractura de hueso",
-            Especialidad = "Traumatología",
-            Habitacion = "204H"  } } });
-
-            pacientes.Add(new Paciente { Id = contadorId++, Name = "Finca", Surname = "Terrasa", Age = 16 });
-            pacientes.Add(new Paciente { Id = contadorId++, Name = "Pago", Surname = "Carraovejas", Age = 50 });
-            RefrescarGrid();
+            RellenarDGV();
         }
 
-        /*
-         El cambio que he hecho ha sido porque no puedo poner una función genérica en los botones, ya que cada uno va a hacer algo diferente
-         el de agregar si que hará como lo teniamos antes, introducimos la lista, introducimos un null porque no queremos editar ningún paciente
-         y luego le asignamos el contador para poder seguir desde el que teníamos anteriormente utilizando.
-         */
+        
         private void botonAgregar_Click(object sender, EventArgs e)
         {
-            var frm = new FormularioPaciente(pacientes, null, contadorId);
+            var frm = new FormularioPaciente(null);
             frm.ShowDialog();
+            RellenarDGV();
 
-            contadorId = frm.UltimoId;
-            RefrescarGrid();
         }
 
         /*
@@ -71,11 +53,15 @@ namespace DataGridView
                 return;
             }
 
-            Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
+            int pacienteId= (int)dataGridViewForm1.CurrentRow.Cells[3].Value;
 
-            var frm = new FormularioPaciente(pacientes, pacienteSeleccionado, contadorId);
+            Paciente pacienteSeleccionado = new Paciente { Id = pacienteId };
+
+            var frm = new FormularioPaciente(pacienteSeleccionado);
             frm.ShowDialog();
-            RefrescarGrid();
+
+            RellenarDGV();
+
         }
 
         private void botonListar_Click(object sender, EventArgs e)
@@ -91,7 +77,6 @@ namespace DataGridView
 
         private void dataGridViewForm1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            RefrescarGrid();
         }
 
         private void abrirIngresos()
@@ -102,12 +87,13 @@ namespace DataGridView
                 return;
             }
 
-            Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
+            int pacienteId = (int)dataGridViewForm1.CurrentRow.Cells[3].Value;
 
-            var frm = new FormularioIngersos(pacienteSeleccionado, contadorIdIngreso);
+            Paciente pacienteSeleccionado = new Paciente { Id = pacienteId };
+
+            var frm = new FormularioIngersos(pacienteSeleccionado);
             frm.ShowDialog();
 
-            RefrescarGrid();
         }
 
         private void saberMásMNU_Click(object sender, EventArgs e)
@@ -117,11 +103,9 @@ namespace DataGridView
 
         private void TLSagregar_Click(object sender, EventArgs e)
         {
-            var frm = new FormularioPaciente(pacientes, null, contadorId);
+            var frm = new FormularioPaciente(null);
             frm.ShowDialog();
 
-            contadorId = frm.UltimoId;
-            RefrescarGrid();
         }
 
         private void TLSeditar_Click(object sender, EventArgs e)
@@ -132,11 +116,14 @@ namespace DataGridView
                 return;
             }
 
-            Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
+            int pacienteId = (int)dataGridViewForm1.CurrentRow.Cells[3].Value;
 
-            var frm = new FormularioPaciente(pacientes, pacienteSeleccionado, contadorId);
+            Paciente pacienteSeleccionado = new Paciente { Id = pacienteId };
+
+            var frm = new FormularioPaciente(pacienteSeleccionado);
             frm.ShowDialog();
-            RefrescarGrid();
+
+            RellenarDGV();
         }
 
         private void TLSeliminar_Click(object sender, EventArgs e)
@@ -146,11 +133,9 @@ namespace DataGridView
 
         private void agregarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var frm = new FormularioPaciente(pacientes, null, contadorId);
+            var frm = new FormularioPaciente(null);
             frm.ShowDialog();
 
-            contadorId = frm.UltimoId;
-            RefrescarGrid();
         }
 
         private void editarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -163,9 +148,8 @@ namespace DataGridView
 
             Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
 
-            var frm = new FormularioPaciente(pacientes, pacienteSeleccionado, contadorId);
+            var frm = new FormularioPaciente(pacienteSeleccionado);
             frm.ShowDialog();
-            RefrescarGrid();
         }
 
         private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -173,19 +157,7 @@ namespace DataGridView
             eliminarPaciente();
         }
 
-        //private void abrirPaciente()
-        //{
-        //    /*
-        //     Aquí introduzco la lista de pacientes, un null y el contador del Id de los pacientes
-        //     Que seguidamente le decimos que el contadorId es la variable creada en el formulario de paciente
-        //     */
-        //    var frm = new FormularioPaciente(pacientes, null, contadorId);
-        //    frm.ShowDialog();
 
-        //    contadorId = frm.UltimoId;
-
-        //    RefrescarGrid();
-        //}
 
         private void eliminarPaciente()
         {
@@ -198,8 +170,11 @@ namespace DataGridView
                 MessageBox.Show("Selecciona al paciente que quieres eliminar");
             }
 
+            int pacienteId = (int)dataGridViewForm1.CurrentRow.Cells[3].Value;
 
-            if (pacientes != null)
+            Paciente pacienteSeleccionado = new Paciente { Id = pacienteId };
+
+            if (pacienteSeleccionado != null)
             {
                 /*
                  Si hay algún paciente seleccionado lo que haremos es hacer saltar un mensaje de confirmación
@@ -223,15 +198,41 @@ namespace DataGridView
 
                 if (result == DialogResult.Yes)
                 {
-                    Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
-                    pacientes.Remove(pacienteSeleccionado);
+                    using (SqlConnection conn = new SqlConnection(cadena))
+                    {
+                        conn.Open();
 
-                    RefrescarGrid();
+                        string sql = "DELETE FROM Pacientes WHERE id_paciente = @id";
+
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+
+                        cmd.Parameters.AddWithValue("@id", pacienteId);
+
+                        int filas = cmd.ExecuteNonQuery();
+                        MessageBox.Show($"Filas eliminadas: {filas}");
+                    }
+
 
                 }
+                RellenarDGV();
             }
         }
+        private void RellenarDGV()
+        {
 
-       
+            using (SqlConnection conn = new SqlConnection(cadena))
+            {
+                conn.Open();
+
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Pacientes", conn);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                dataGridViewForm1.DataSource = dt;
+            }
+        }
     }
 }

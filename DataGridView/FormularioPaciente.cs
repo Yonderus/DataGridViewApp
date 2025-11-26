@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,21 +14,14 @@ namespace DataGridView
 {
     public partial class FormularioPaciente : Form
     {
-        //Creamos estas tres variables para poder utilizarlas con la información que nos trae el otro formulario
+        string cadena = ConfigurationManager.ConnectionStrings["conn"].ConnectionString;
         private Paciente actualPacient;
-        private List<Paciente> listapacientes;
-        private int contadorId;
 
-        public FormularioPaciente(List<Paciente> pacientes, Paciente paciente, int contador)
+        public FormularioPaciente(Paciente paciente)
         {
             InitializeComponent();
-            //Aquí asignamos tanto la lista como el contador
-            listapacientes = pacientes;
-            contadorId = contador;
+            RellenarDGV();
 
-            //Volvemos a cargar el dataGridView
-            dgvRegistro.DataSource = null;
-            dgvRegistro.DataSource = listapacientes;
 
             /*
              Comprobamos primero que la opción que queremos es editar, eso quiere decir que si es diferente a null es decir
@@ -56,10 +51,7 @@ namespace DataGridView
         }
 
         //Aquí lo que hacemos es en base la variable creada, recibir el contador anterior
-        public int UltimoId
-        {
-            get { return contadorId; }
-        }
+        
 
         private void tbNombrePaciente_TextChanged(object sender, EventArgs e)
         {
@@ -107,15 +99,13 @@ namespace DataGridView
             /*
            Creamos unas variables para asignar los textbox
            */
-            String nombre;
-            String apellido;
             int edad;
 
             /*
-             Hacemos unas comprobaciones (no correctas porque los espacios en blanco se los come) para que si hay algún campo vacío
+             Hacemos unas comprobacionespara que si hay algún campo vacío
              salte un messageBox
              */
-            if (tbNombrePaciente.Text == "" || tbApellidoPaciente.Text == "" || tbEdadPaciente == null)
+            if (string.IsNullOrEmpty(tbNombrePaciente.Text) || string.IsNullOrEmpty(tbApellidoPaciente.Text) || tbEdadPaciente == null)
             {
                 MessageBox.Show("No puedes dejar campos vacíos.");
 
@@ -124,32 +114,38 @@ namespace DataGridView
             else if (!int.TryParse(tbEdadPaciente.Text, out edad) || edad < 0)
             {
                 MessageBox.Show("Tienes que introducir una edad que sea correcta.");
-            }
-            //Una vez se cumplan los anteriores, añadimos los datos a la lista
-            else
+            } else
             {
-                nombre = tbNombrePaciente.Text;
-                apellido = tbApellidoPaciente.Text;
+                using (SqlConnection conn = new SqlConnection(cadena))
+                {
+                    conn.Open();
 
-                listapacientes.Add(new Paciente { Id = contadorId++, Name = nombre, Surname = apellido, Age = edad });
+                    string sql = "INSERT INTO Pacientes (name, surname, age) VALUES (@name, @surname, @age)";
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@name", tbNombrePaciente.Text);
+                    cmd.Parameters.AddWithValue("@surname", tbApellidoPaciente.Text);
+                    cmd.Parameters.AddWithValue("@age", tbEdadPaciente.Text);
+
+
+                    int filas = cmd.ExecuteNonQuery();
+                    MessageBox.Show($"Se han introducido {filas} filas.");
+                }
             }
+
             tbApellidoPaciente.Clear();
             tbEdadPaciente.Clear();
             tbNombrePaciente.Clear();
-            //Y aquí volvemos a cargar la lista
-            dgvRegistro.DataSource = null;
-            dgvRegistro.DataSource = listapacientes;
+            RellenarDGV();
         }
 
         private void EditarPaciente()
         {
             if (dgvRegistro.CurrentRow != null)
             {
-                //Paciente pacienteSeleccionado = (Paciente)dgvRegistro.CurrentRow.DataBoundItem;
-                actualPacient.Name = tbNombrePaciente.Text;
-                actualPacient.Surname = tbApellidoPaciente.Text;
                 int edad;
-                if (tbNombrePaciente.Text == "" || tbApellidoPaciente.Text == "" || tbEdadPaciente == null)
+                if (string.IsNullOrEmpty(tbNombrePaciente.Text) || string.IsNullOrEmpty(tbApellidoPaciente.Text) || tbEdadPaciente == null)
                 {
                     MessageBox.Show("No puedes dejar campos vacíos.");
 
@@ -162,18 +158,32 @@ namespace DataGridView
                 //Una vez se cumplan los anteriores, añadimos los datos a la lista
                 else
                 {
-                    actualPacient.Age = edad;
+                    int pacienteId = (int)dgvRegistro.CurrentRow.Cells[3].Value;
 
+                    using (SqlConnection conn = new SqlConnection(cadena))
+                    {
+                        conn.Open();
+
+                        string sql = "UPDATE Pacientes SET name = @name, surname = @surname, @age = age WHERE id_paciente = @id";
+
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+
+                        cmd.Parameters.AddWithValue("@id", pacienteId);
+                        cmd.Parameters.AddWithValue("@name", tbNombrePaciente.Text);
+                        cmd.Parameters.AddWithValue("@surname", tbApellidoPaciente.Text);
+                        cmd.Parameters.AddWithValue("@age", tbEdadPaciente.Text);
+
+                        int filas = cmd.ExecuteNonQuery();
+                        MessageBox.Show($"Se han actualizado {filas} filas.");
+
+                        
+                    }
                 }
                 tbApellidoPaciente.Clear();
                 tbEdadPaciente.Clear();
                 tbNombrePaciente.Clear();
-                //Y aquí volvemos a cargar la lista
-                dgvRegistro.DataSource = null;
-                dgvRegistro.DataSource = listapacientes;
 
-                this.Close();
-
+                RellenarDGV();
             }
         }
 
@@ -225,6 +235,24 @@ namespace DataGridView
         private void saberMásMNU_Click(object sender, EventArgs e)
         {
             MessageBox.Show("En este apartado podrás tanto editar, como ingresar pacientes.");
+        }
+
+        private void RellenarDGV()
+        {
+
+            using (SqlConnection conn = new SqlConnection(cadena))
+            {
+                conn.Open();
+
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Pacientes", conn);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                dgvRegistro.DataSource = dt;
+            }
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,25 +15,16 @@ namespace DataGridView
 {
     public partial class FormularioIngersos : Form
     {
-        private Paciente pacienteActual;
-        private int contadorIngreso;
 
-        public FormularioIngersos(Paciente paciente, int contador)
+        private string cadena = ConfigurationManager.ConnectionStrings["conn"].ConnectionString;
+        private Paciente pacienteSeleccionado;
+        public FormularioIngersos(Paciente paciente)
         {
             InitializeComponent();
-
-            dtAlta.Enabled = false;
-
-            pacienteActual = paciente;
-            contadorIngreso = contador;
-
-           
-
-            // Mostrar los ingresos del paciente
-            dgvIngresos.DataSource = null;
-            dgvIngresos.DataSource = pacienteActual.Ingresos;
-
+            pacienteSeleccionado = paciente;
+            RellenarDGV();
         }
+
 
         private void btbAgregarIngreso_Click(object sender, EventArgs e)
         {
@@ -83,28 +76,31 @@ namespace DataGridView
         private void AgregarIngreso()
         {
             //Hacemos unas comprobaciones para que no hayan campos vacíos
-            if (tbMotivo.Text == "" || tbHabitacion.Text == "" || tbEspecialidad.Text == "")
-            {
+            if (string.IsNullOrEmpty(tbMotivo.Text) || string.IsNullOrEmpty(tbHabitacion.Text) || string.IsNullOrEmpty(tbEspecialidad.Text))
+            { 
                 MessageBox.Show("No puedes dejar campos vacíos");
             }
 
-            //Si no hay campos vacíos añadiremos los datos escritos en la lista de ingreso
-                Ingreso ingreso = new Ingreso
-                {
-                    Id = contadorIngreso++,
-                    Motivo = tbMotivo.Text,
-                    FechaAlta = dtAlta.Value,
-                    FechaIngreso = dtIngreso.Value,
-                    Habitacion = tbHabitacion.Text,
-                    Especialidad = tbEspecialidad.Text,
-                };
+            using (SqlConnection conn = new SqlConnection(cadena))
+            {
+                conn.Open();
 
-                pacienteActual.Ingresos.Add(ingreso);
+                string sql = "INSERT INTO Ingreso (fecha_ingreso, fecha_alta, motivo, habitacion, especialidad, id_paciente) VALUES (@fecha_ingreso, @fecha_alta, @motivo, @habitacion, @especialidad, @id_paciente)";
 
-            
-            //Refrescamos el grid view para que nos mueste los nuevos cambios
-            dgvIngresos.DataSource = null;
-            dgvIngresos.DataSource = pacienteActual.Ingresos;
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                
+                
+                cmd.Parameters.AddWithValue("@fecha_ingreso", dtIngreso.Value);
+                cmd.Parameters.AddWithValue("@fecha_alta", dtAlta.Value);
+                cmd.Parameters.AddWithValue("@motivo", tbMotivo.Text);
+                cmd.Parameters.AddWithValue("@habitacion", tbHabitacion.Text);
+                cmd.Parameters.AddWithValue("@especialidad", tbEspecialidad.Text);
+                cmd.Parameters.AddWithValue("@id_paciente", pacienteSeleccionado.Id);
+                
+
+                int filas = cmd.ExecuteNonQuery();
+                MessageBox.Show($"Filas insertadas: {filas}");
+            }
 
             tbMotivo.Clear();
             tbEspecialidad.Clear();
@@ -112,6 +108,7 @@ namespace DataGridView
 
             //Aqui volvemos a poner el group box en no visible, para que solo sea visible al pulsar una de las opciones de arriba
             gpbAgregarIngreso.Visible = false;
+            RellenarDGV();
         }
 
         private void EditarIngreso()
@@ -137,30 +134,38 @@ namespace DataGridView
                 return;
             }
 
-            if (tbMotivo.Text == "" || tbHabitacion.Text == "" || tbEspecialidad.Text == "")
+            if (string.IsNullOrEmpty(tbMotivo.Text) || string.IsNullOrEmpty(tbHabitacion.Text) || string.IsNullOrEmpty(tbEspecialidad.Text))
 
             {
                 MessageBox.Show("No puedes dejar campos vacíos.");
             }
             else
             {
-                /*
-                 Seguidamente si todo lo anterior se cumple, nos creamos una varible para luego asignar
-                cada una de ellas a su text box
-                 */
+              
+                int ingresoId = (int)dgvIngresos.CurrentRow.Cells[6].Value;
 
+                using (SqlConnection conn = new SqlConnection(cadena))
+                {
+                    conn.Open();
 
-                Ingreso ingresoSeleccionado = (Ingreso)dgvIngresos.CurrentRow.DataBoundItem;
+                    string sql = "UPDATE Ingreso SET fecha_alta = @fecha_alta, fecha_ingreso = @fecha_ingreso, motivo = @motivo, habitacion = @habitacion, especialidad = @especialidad WHERE id_ingreso = @id";
 
-                ingresoSeleccionado.Motivo = tbMotivo.Text;
-                ingresoSeleccionado.Especialidad = tbEspecialidad.Text;
-                ingresoSeleccionado.Habitacion = tbHabitacion.Text;
-                ingresoSeleccionado.FechaIngreso = dtIngreso.Value;
-                ingresoSeleccionado.FechaAlta = dtAlta.Value;
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@id", ingresoId);
+                    //Lo de la fecha he recurrido ha buscarlo:
+                    cmd.Parameters.Add("@fecha_alta", SqlDbType.Date).Value = dtAlta.Value.Date;
+                    cmd.Parameters.Add("@fecha_ingreso", SqlDbType.Date).Value = dtIngreso.Value.Date;
+                    cmd.Parameters.AddWithValue("@motivo", tbMotivo.Text);
+                    cmd.Parameters.AddWithValue("@habitacion", tbHabitacion.Text);
+                    cmd.Parameters.AddWithValue("@especialidad", tbEspecialidad.Text);
+
+                    int filas = cmd.ExecuteNonQuery();
+                    MessageBox.Show($"Se han actualizado {filas} filas.");
+                }
 
                 //Refrescamos la lista
-                dgvIngresos.DataSource = null;
-                dgvIngresos.DataSource = pacienteActual.Ingresos;
+                RellenarDGV();
 
                 //Volvemos a dar paso a la opción de agregar ingreso
                 gpbAgregarIngreso.Text = "Agregar Ingreso";
@@ -191,6 +196,8 @@ namespace DataGridView
                 return;
             }
 
+            int ingresoId = (int)dgvIngresos.CurrentRow.Cells[6].Value;
+
             DialogResult result = MessageBox.Show(
                 "¿Seguro que deseas eliminar este ingreso?",
                 "Confirmar eliminación",
@@ -200,15 +207,24 @@ namespace DataGridView
 
             if (result == DialogResult.Yes)
             {
-                Ingreso ingresoSeleccionado = (Ingreso)dgvIngresos.CurrentRow.DataBoundItem;
-                pacienteActual.Ingresos.Remove(ingresoSeleccionado);
+                using (SqlConnection conn = new SqlConnection(cadena))
+                {
+                    conn.Open();
 
-                dgvIngresos.DataSource = null;
-                dgvIngresos.DataSource = pacienteActual.Ingresos;
+                    string sql = "DELETE FROM Ingreso WHERE id_ingreso = @id";
 
-                MessageBox.Show("Ingreso eliminado correctamente.");
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@id", ingresoId);
+
+                    int filas = cmd.ExecuteNonQuery();
+                    MessageBox.Show($"Filas eliminadas: {filas}");
+                }
+
+                RellenarDGV();
             }
         }
+        
 
         private void chbFechaAlta_CheckedChanged(object sender, EventArgs e)
         {
@@ -221,13 +237,13 @@ namespace DataGridView
 
         private void dgvIngresos_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            // Obtener la fila actual
-            DataGridViewRow fila = dgvIngresos.Rows[e.RowIndex];
+            //// Obtener la fila actual
+            //DataGridViewRow fila = dgvIngresos.Rows[e.RowIndex];
 
-            // Asignar valores a controles
-            tbMotivo.Text = fila.Cells["Motivo"].Value.ToString();
-            tbEspecialidad.Text = fila.Cells["Especialidad"].Value.ToString();
-            tbHabitacion.Text = fila.Cells["Habitacion"].Value.ToString();
+            //// Asignar valores a controles
+            //tbMotivo.Text = fila.Cells["Motivo"].Value.ToString();
+            //tbEspecialidad.Text = fila.Cells["Especialidad"].Value.ToString();
+            //tbHabitacion.Text = fila.Cells["Habitacion"].Value.ToString();
         }
 
         //A partir de aquí solo son las funcionalidades de los botones para que variar entre el agregar y editar
@@ -292,6 +308,27 @@ namespace DataGridView
         private void saberMásMNU_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Aquí en este formulario podrás manipular cualquiera de los ingresos, añadir unos nuevos o eliminarlos.");
+        }
+
+        private void RellenarDGV()
+        {
+
+            using (SqlConnection conn = new SqlConnection(cadena))
+            {
+                conn.Open();
+
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Ingreso WHERE id_paciente = @id ", conn);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+
+                da.SelectCommand.Parameters.AddWithValue("@id", pacienteSeleccionado.Id);
+
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                dgvIngresos.DataSource = dt;
+            }
         }
     }
 }
