@@ -146,10 +146,14 @@ namespace DataGridView
                 return;
             }
 
-            Paciente pacienteSeleccionado = (Paciente)dataGridViewForm1.CurrentRow.DataBoundItem;
+            int pacienteId = (int)dataGridViewForm1.CurrentRow.Cells[3].Value;
+
+            Paciente pacienteSeleccionado = new Paciente { Id = pacienteId };
 
             var frm = new FormularioPaciente(pacienteSeleccionado);
             frm.ShowDialog();
+
+            RellenarDGV();
         }
 
         private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
